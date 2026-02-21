@@ -1,3 +1,4 @@
+import argparse
 import time
 
 from common import run_scope_tests
@@ -36,7 +37,14 @@ TEST_SUITE = [
 
 
 def main():
-    run_scope_tests(TEST_SUITE)
+    parser = argparse.ArgumentParser(description="Test OAuth scopes for Agents API")
+    parser.add_argument(
+        "--user-delegated",
+        action="store_true",
+        help="Use user consent flow (authorization code). Opens browser for user to approve; requires REDIRECT_URI (e.g. http://localhost:8888/callback) registered for your app.",
+    )
+    args = parser.parse_args()
+    run_scope_tests(TEST_SUITE, use_user_delegated=args.user_delegated)
 
 
 if __name__ == "__main__":

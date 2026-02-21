@@ -1,3 +1,4 @@
+import argparse
 import time
 
 from common import run_scope_tests
@@ -13,8 +14,8 @@ TEST_SUITE = [
     {"scope": "user:invite", "path": "/api/v1/users", "method": "POST",
      "body": {"fullName": "New Tester", "email": "testuser@example.com", "sendInvite": False}},
     # 3. User Groups
-    {"scope": "usergroup:read", "path": "/api/v1/user-groups", "method": "GET"},
-    {"scope": "usergroup:write", "path": "/api/v1/user-groups", "method": "POST",
+    {"scope": "usergroup:read", "path": "/api/v1/userGroups", "method": "GET"},
+    {"scope": "usergroup:write", "path": "/api/v1/userGroups", "method": "POST",
      "body": {"name": f"Test Group {int(time.time())}", "type": "standard"}},
     # 4. Teams
     {"scope": "team:read", "path": "/api/v1/teams", "method": "GET"},
@@ -24,7 +25,14 @@ TEST_SUITE = [
 
 
 def main():
-    run_scope_tests(TEST_SUITE)
+    parser = argparse.ArgumentParser(description="Test OAuth scopes for User/Org Management API")
+    parser.add_argument(
+        "--user-delegated",
+        action="store_true",
+        help="Use user consent flow (authorization code). Opens browser for user to approve; requires REDIRECT_URI (e.g. http://localhost:8888/callback) registered for your app.",
+    )
+    args = parser.parse_args()
+    run_scope_tests(TEST_SUITE, use_user_delegated=args.user_delegated)
 
 
 if __name__ == "__main__":
